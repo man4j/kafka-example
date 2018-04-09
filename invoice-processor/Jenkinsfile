@@ -48,7 +48,7 @@ pipeline {
     }
     stage('Image') {
       steps {
-        sh 'mvn -f invoice-processor/pom.xml -s $SETTINGS_XML git-commit-id-plugin:revision docker:build -DpushImage'
+        sh 'mvn -f invoice-processor/pom.xml -s $SETTINGS_XML pl.project13.maven:git-commit-id-plugin:2.2.4:revision docker:build -DpushImage'
       }
     }
   } 
