@@ -40,13 +40,6 @@ pipeline {
       steps {
         sh 'mvn -DbrokerList=kafka-1-jenkins$HOSTNAME:9092,kafka-2-jenkins$HOSTNAME:9092,kafka-3-jenkins$HOSTNAME:9092 -f invoice-processor/pom.xml surefire:test'
       }
-      post {
-        always {
-          sh 'curl --unix-socket /var/run/docker.sock -gfX POST http:/v1.33/networks/kafka-net-jenkins$HOSTNAME/disconnect -H "Content-Type: application/json" -d "{\\"Container\\":\\"jenkins$HOSTNAME\\",\\"force\\":true}"'
-          sh 'sleep 5'
-          sh 'curl -gfX POST http://clustercontrol:8080/marketplace/undeploy/kafka/1.0.0?wait=true -H "Content-Type: application/json" -d "{\\"namespace\\":\\"jenkins$HOSTNAME\\"}"'            
-        }
-      }
     }
     stage('Package') {
       steps {
@@ -62,6 +55,10 @@ pipeline {
   
   post {
     always {
+      sh 'curl --unix-socket /var/run/docker.sock -gfX POST http:/v1.33/networks/kafka-net-jenkins$HOSTNAME/disconnect -H "Content-Type: application/json" -d "{\\"Container\\":\\"jenkins$HOSTNAME\\",\\"force\\":true}" || true'
+      sh 'sleep 5'
+      sh 'curl -gfX POST http://clustercontrol:8080/marketplace/undeploy/kafka/1.0.0?wait=true -H "Content-Type: application/json" -d "{\\"namespace\\":\\"jenkins$HOSTNAME\\"}" || true'            
+    
       junit 'target/surefire-reports/*.xml'    
     }
   }
