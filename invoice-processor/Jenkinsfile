@@ -18,17 +18,17 @@ pipeline {
     }
     stage('Clean') {
       steps {
-        sh 'mvn clean:clean'
+        sh 'mvn -f invoice-processor/pom.xml clean:clean'
       }
     }
     stage('Resources') {
       steps {
-        sh 'mvn resources:resources resources:testResources'
+        sh 'mvn -f invoice-processor/pom.xml resources:resources resources:testResources'
       }
     }
     stage('Compile') {
       steps {
-        sh 'mvn compiler:compile compiler:testCompile'
+        sh 'mvn -f invoice-processor/pom.xml compiler:compile compiler:testCompile'
       }
     }
     stage('Connect to environment') {
@@ -38,7 +38,7 @@ pipeline {
     }
     stage('Test') {
       steps {
-        sh 'mvn -DautoOffsetReset=earliest -DbrokerList=kafka-1-jenkins$HOSTNAME:9092,kafka-2-jenkins$HOSTNAME:9092,kafka-3-jenkins$HOSTNAME:9092 surefire:test'
+        sh 'mvn -f invoice-processor/pom.xml -DautoOffsetReset=earliest -DbrokerList=kafka-1-jenkins$HOSTNAME:9092,kafka-2-jenkins$HOSTNAME:9092,kafka-3-jenkins$HOSTNAME:9092 surefire:test'
       }
       post {
         always {
@@ -50,12 +50,12 @@ pipeline {
     }
     stage('Package') {
       steps {
-        sh 'mvn jar:jar shade:shade'
+        sh 'mvn -f invoice-processor/pom.xml jar:jar shade:shade'
       }
     }
     stage('Image') {
       steps {
-        sh 'mvn -s $SETTINGS_XML docker:build -DpushImage'
+        sh 'mvn -f invoice-processor/pom.xml -s $SETTINGS_XML docker:build -DpushImage'
       }
     }
   } 
