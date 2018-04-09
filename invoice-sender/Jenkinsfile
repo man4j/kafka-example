@@ -13,7 +13,7 @@ pipeline {
   stages {
     stage('Create environment') {
       steps {
-        sh 'curl -gfX POST "http://clustercontrol:8080/marketplace/deploy/kafka/1.0.0?wait=true&repository=$(git remote show origin)&branch=${BRANCH_NAME}" -H "Content-Type: application/json" -d "{\\"namespace\\":\\"jenkins$HOSTNAME\\",\\"DELETE_DATA\\":\\"true\\"}"'
+        sh 'curl --data-urlencode "repository=$(git remote show origin)" -gfX POST "http://clustercontrol:8080/marketplace/deploy/kafka/1.0.0?wait=true&branch=${BRANCH_NAME}" -H "Content-Type: application/json" -d "{\\"namespace\\":\\"jenkins$HOSTNAME\\",\\"DELETE_DATA\\":\\"true\\"}"'
       }
     }
     stage('Clean') {
