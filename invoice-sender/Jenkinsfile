@@ -38,7 +38,7 @@ pipeline {
     }
     stage('Test') {
       steps {
-        sh 'mvn -f invoice-processor/pom.xml -DbrokerList=kafka-1-jenkins$HOSTNAME:9092,kafka-2-jenkins$HOSTNAME:9092,kafka-3-jenkins$HOSTNAME:9092 surefire:test'
+        sh 'mvn -DbrokerList=kafka-1-jenkins$HOSTNAME:9092,kafka-2-jenkins$HOSTNAME:9092,kafka-3-jenkins$HOSTNAME:9092 -f invoice-processor/pom.xml surefire:test'
       }
       post {
         always {
