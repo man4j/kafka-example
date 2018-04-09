@@ -25,6 +25,10 @@ import services.invoiceprocessor.service.InvoiceConsumer;
 @ContextConfiguration(classes={Main.class})
 @WebAppConfiguration
 public class InvoiceConsumerTest {    
+    static {
+        System.setProperty("autoOffsetReset", "earliest");
+    }
+    
     @Autowired
     private InvoiceConsumer invoiceConsumer;
     

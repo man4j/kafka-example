@@ -23,6 +23,10 @@ import services.invoicesender.model.Invoice;
 @ContextConfiguration(classes=Main.class)
 @WebAppConfiguration
 public class InvoiceControllerTest {
+    static {
+        System.setProperty("autoOffsetReset", "earliest");
+    }
+
     @Autowired
     private ObjectMapper mapper;
     
