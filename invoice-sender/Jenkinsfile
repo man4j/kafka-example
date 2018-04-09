@@ -13,22 +13,22 @@ pipeline {
   stages {
     stage('Create environment') {
       steps {
-        sh 'curl -gfX POST "http://clustercontrol:8080/marketplace/deploy/kafka/1.0.0?wait=true&repository=kafka-example&branch=${BRANCH_NAME}" -H "Content-Type: application/json" -d "{\\"namespace\\":\\"jenkins$HOSTNAME\\",\\"DELETE_DATA\\":\\"true\\"}"'
+        sh 'curl -gfX POST "http://clustercontrol:8080/marketplace/deploy/kafka/1.0.0?wait=true&repository=$(git remote show origin)&branch=${BRANCH_NAME}" -H "Content-Type: application/json" -d "{\\"namespace\\":\\"jenkins$HOSTNAME\\",\\"DELETE_DATA\\":\\"true\\"}"'
       }
     }
     stage('Clean') {
       steps {
-        sh 'mvn -f invoice-processor/pom.xml clean:clean'
+        sh 'mvn -f invoice-sender/pom.xml clean:clean'
       }
     }
     stage('Resources') {
       steps {
-        sh 'mvn -f invoice-processor/pom.xml resources:resources resources:testResources'
+        sh 'mvn -f invoice-sender/pom.xml resources:resources resources:testResources'
       }
     }
     stage('Compile') {
       steps {
-        sh 'mvn -f invoice-processor/pom.xml compiler:compile compiler:testCompile'
+        sh 'mvn -f invoice-sender/pom.xml compiler:compile compiler:testCompile'
       }
     }
     stage('Connect to environment') {
@@ -38,17 +38,17 @@ pipeline {
     }
     stage('Test') {
       steps {
-        sh 'mvn -DbrokerList=kafka-1-jenkins$HOSTNAME:9092,kafka-2-jenkins$HOSTNAME:9092,kafka-3-jenkins$HOSTNAME:9092 -f invoice-processor/pom.xml surefire:test'
+        sh 'mvn -DbrokerList=kafka-1-jenkins$HOSTNAME:9092,kafka-2-jenkins$HOSTNAME:9092,kafka-3-jenkins$HOSTNAME:9092 -f invoice-sender/pom.xml surefire:test'
       }
     }
     stage('Package') {
       steps {
-        sh 'mvn -f invoice-processor/pom.xml jar:jar shade:shade'
+        sh 'mvn -f invoice-sender/pom.xml jar:jar shade:shade'
       }
     }
     stage('Image') {
       steps {
-        sh 'mvn -f invoice-processor/pom.xml -s $SETTINGS_XML pl.project13.maven:git-commit-id-plugin:2.2.4:revision docker:build -DpushImage'
+        sh 'mvn -f invoice-sender/pom.xml -s $SETTINGS_XML pl.project13.maven:git-commit-id-plugin:2.2.4:revision docker:build -DpushImage'
       }
     }
   } 
@@ -59,7 +59,7 @@ pipeline {
       sh 'sleep 5'
       sh 'curl -gfX POST http://clustercontrol:8080/marketplace/undeploy/kafka/1.0.0?wait=true -H "Content-Type: application/json" -d "{\\"namespace\\":\\"jenkins$HOSTNAME\\"}" || true'            
     
-      junit 'target/surefire-reports/*.xml'    
+      junit 'invoice-sender/target/surefire-reports/*.xml'    
     }
   }
 }
