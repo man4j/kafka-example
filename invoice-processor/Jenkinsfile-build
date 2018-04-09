@@ -37,10 +37,4 @@ pipeline {
       }
     }
   } 
-  
-  post {
-    always {
-      junit 'invoice-processor/target/surefire-reports/*.xml'    
-    }
-  }
 }
