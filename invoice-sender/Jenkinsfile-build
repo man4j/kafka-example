@@ -1,3 +1,6 @@
+//Example URL for build trigger: http://admin:fb28685077e54c4f98e207b6cc31ef48@159.65.118.202:4444/job/kafka-example-processor-build/job/master/build 
+//Show API Token: http://159.65.118.202:4444/user/admin/configure
+
 pipeline {
   agent {
     docker {
