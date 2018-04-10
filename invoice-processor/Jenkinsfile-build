@@ -1,5 +1,6 @@
-//Example URL for build trigger: http://admin:fb28685077e54c4f98e207b6cc31ef48@159.65.118.202:4444/job/kafka-example-processor-build/job/master/build 
-//Show API Token: http://159.65.118.202:4444/user/admin/configure
+//Add Git Hook:
+//1. Open https://github.com/man4j/kafka-example/settings/hooks
+//2. Add hook url to push: http://159.65.118.202:4444/git/notifyCommit?url=https://github.com/man4j/kafka-example.git
 
 pipeline {
   agent {
