@@ -13,7 +13,7 @@ pipeline {
   stages {
     stage('Create environment') {
       steps {
-        sh 'curl -gfX POST "http://clustercontrol:8080/marketplace/deploy/kafka/1.0.0?wait=true&branch=${BRANCH_NAME}&repository=$(git config --get remote.origin.url)" -H "Content-Type: application/json" -d "{\\"namespace\\":\\"jenkins$HOSTNAME\\",\\"DELETE_DATA\\":\\"true\\"}"'
+        sh 'curl -gfX POST "http://clustercontrol:8080/marketplace/deploy/jenkins$HOSTNAME/kafka/1.0.0?wait=true&branch=${BRANCH_NAME}&repository=$(git config --get remote.origin.url)" -H "Content-Type: application/json" -d "{\\"DELETE_DATA\\":\\"true\\"}"'
       }
     }
     stage('Clean') {
@@ -57,7 +57,7 @@ pipeline {
     always {
       sh 'curl --unix-socket /var/run/docker.sock -gfX POST http:/v1.33/networks/kafka-net-jenkins$HOSTNAME/disconnect -H "Content-Type: application/json" -d "{\\"Container\\":\\"$HOSTNAME\\",\\"force\\":true}" || true'
       sh 'sleep 5'
-      sh 'curl -gfX POST http://clustercontrol:8080/marketplace/undeploy/kafka/1.0.0?wait=true -H "Content-Type: application/json" -d "{\\"namespace\\":\\"jenkins$HOSTNAME\\"}" || true'            
+      sh 'curl -gfX POST http://clustercontrol:8080/marketplace/undeploy/jenkins$HOSTNAME/kafka/1.0.0?wait=true -H "Content-Type: application/json" || true'            
     
       junit 'invoice-processor/target/surefire-reports/*.xml'    
     }

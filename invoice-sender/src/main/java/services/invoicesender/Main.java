@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +37,9 @@ public class Main {
     
     @Autowired
     private ObjectMapper mapper;
+    
+    @Autowired
+    private KafkaAdmin admin;
     
     @Bean
     public NewTopic invoicesTopic() {
@@ -65,7 +69,12 @@ public class Main {
             }
         };
     
-        sendThread.start();
+        //несмотря на то, что админ инициализируется в KafkaMessagingConfig, 
+        //необходимо запускать поток только после его инициализации, чтобы топики были уже созданы
+        //поэтому проверяем инициализацию еще раз
+        if (admin.initialize()) {
+            sendThread.start();
+        }
     }
     
     @PreDestroy
