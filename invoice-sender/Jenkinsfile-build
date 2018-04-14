@@ -17,6 +17,7 @@ pipeline {
   stages {
     stage('Clean') {
       steps {
+        sh 'echo "tag comment:${TAG_NAME}"'
         sh 'mvn -f invoice-sender/pom.xml clean:clean'
       }
     }
